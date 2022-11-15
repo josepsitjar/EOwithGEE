@@ -37,42 +37,47 @@ The Code Editor is an integrated development environment for the Earth Engine Ja
 The Code Editor has the following elements
 
 
-a) Editor de código JavaScript
-b) Mapa para visualizar los datos geoespaciales
-c) Herramientas de dibujo
-d) Documentación de la API de referencia (Docs)
-e) Administrador de Scripts
-f) Consola de salida
-g) Administrador de tareas (Tasks)
+a) Javascript code editor
+b) Map to visualize geospatial data
+c) Drawing tools
+d) API documentation
+e) Script manager
+f) Console output
+g) Tasks tab
 
 
 .. image:: static/codeeditor.png
-  :width: 400
+  :width: 800
   :alt: Code editor
 
 
-**Editor de código JavaScript**: En esta ventana es donde podréis crear vuestros *scripts*. Justo sobre el editor de código, hay disponibles los botones para ejecutar (Run), guardar (Save) y reiniciar (Reset) los *scripts*, así como generar un enlace de acceso a ellos (link).
+**Javascript code editor**: This is to create your own scripts. Just over this code editor, you'll find buttons to run, save and reset scripts, and also to generate a link to them.
 
-**Mapa para visualizar los datos geoespaciales**: En este mapa podréis visualizar los datos e imágenes del catálogo de GEE, así como el resultado de vuestros análisis. Incorpora las herramientas de dibujo para la creación de diferentes geometrías: puntos, líneas, polígonos y rectángulos.
+**Map to visualize geospatial data**: The map is useful to visualize data and images from GEE catalog. Also to visualize your analisis results. Includes draw tools to create point, lines, polygon and rectangle geometries.
 
-**Documentación de la API**: Contiene toda la documentación de la API JavaScript de GEE. Tener un rápido alcance toda la documentación resulta muy útil mientras se van desarrollando los *scripts*.
+**API documentation**:  Contains the complete JavaScript API documentation. The documentation can be searched and browsed from the Docs tab.
 
-**Administrador de Scripts**: En esta ventana encontraréis algunos *scripts* de ejemplo, que os pueden resultar de inspiración para el desarrollo de vuestros propios *scripts*. También encontraréis los *scripts* que hayáis decidido guardar, y los de otros usuarios que hayan compartido con vosotros.
+**Script manager**: The Scripts tab is next to the API Docs in the left panel of the Code Editor. The Script Manager stores private, shared and example scripts in Git repositories hosted by Google. The repositories are arranged by access level, with your private scripts stored in a repository you own in the Owner folder.
 
-**Consola de salida**: A través de la consola podréis visualizar también el resultado de la ejecución de los *scripts* haciendo un print(). En esta consola también se mostrarán los errores producidos durante la ejecución del código, con lo que ofrece información muy útil para subsanarlos.
+**Output console**: When you print() something from your script, such as text, objects or charts, the result will be displayed in the Console. The console is interactive, so you can expand printed objects to get more details about them.
+
+**Tasks tab**: Earth Engine Tasks are operations that are capable of running much longer than the standard API request timeout. These long-running tasks are the only mechanism for creating persistent artifacts in Earth Engine and adjacent systems
 
 
-1.3. Buscar una escena
+1.3. Search for a scene
 ========================
 
-Podemos buscar una imagen concreta, si conocemos su identificador. En este caso, se trata de una imagen Landsat 8 de la zona de Catalunya adquirida el 2015-08-03
+Knowing the identifier, we can look for a specific scene.
+
+Now we are going to search a Landsat 8 image from Catalonia acquired on 2015-08-03.
+
 
 .. code-block:: JavaScript
 
-  // Instanciamos la imagen con el constructor:
+  // Image constructor instance:
 	var image = ee.Image('LANDSAT/LC08/C01/T1_TOA/LC08_198031_20150803');
 
-	// Mostramos la imagen en el mapa:
+	// Show the image over the map:
 	Map.addLayer(image);
 
 
