@@ -5,30 +5,37 @@ Earth Observation with Google Earth Engine
 1.1. Introduction
 =================
 
-Google Earth Engine (GEE) es una plataforma desarrollada por Google, orientada al análisis científico y a la visualización de datos geoespaciales.
-Almacena multitud de catálogos de imágenes, incluyendo séries históricas que se remontan a más de quarenta años, y que se ponen a disposición del público a través de un conjunto de APIs.
 
-El acceso a todos estos datos, junto a las herramientas para el análisis y visualización de los mismos, hacen de GEE una herramienta a tener en cuenta en el desarrollo de proyectos relativos a la observación de la tierra.
+Google Earth Engine is a cloud-based platform for scientific data analysis. It provides ready-to-use, cloud-hosted datasets and a large pool of servers.
+One feature that makes Earth Engine particularly attractive is the ability to run large computations very fast by distributing them across a large pool of servers.
+The ability to efficiently use cloud-hosted datasets and computation is enabled by the Earth Engine API.
 
-En esta actividad de autoaprendizaje empezaréis a trabajar con GEE ejecutando algunos sencillos *scripts* que os permitirán descubrir el potencial de la plataforma.
+GEE stores several image catalogs, including historical series that go back more than forty years, open available throught APIs.
+
+Access to all this datasets, also with tools for analysis and visualization, make GEE a tool to be taken into account in the development of projects related to earth observation.
+
+
+This activity is designed as an introduction to GEE running som simple scripts that will allow you to discover the platform potential.
 
 
 
-1.2. Acceso a Google Earth Engine
+1.2. Access to Google Earth Engine
 ==================================
 
-Para acceder a la plataforma GEE deberéis disponer de una cuenta de usuario de Google.
-Con esta cuenta, os podréis registrar a la plataforma accediendo a la página inicial de `GEE <https://earthengine.google.com/>`_ y haciendo click en el apartado **Sign Up**.
+An user Google account is required in order to acces GEE.
+With this account you can register to the platform going to the initial page `GEE <https://earthengine.google.com/>`_ and then clicking to **Sign Up** button.
 
-Una vez creada la cuenta a GEE, deberéis acceder al `editor de código (*code editor*) <https://code.earthengine.google.com/>`_ de la plataforma.
+Once the GEE account is created, access to the `code editor <https://code.earthengine.google.com/>`_
 
 
 
-1.2.1 La interfaz gráfica de GEE
+1.2.1 GEE Code Editor
 ---------------------------------
 
-El editor de GEE consta de diferentes espacios, pensados para facilitar el desarrollo de los *scripts* y la visualización de los resultados obtenidos.
-Consta de los siguientes elementos:
+The Code Editor is an integrated development environment for the Earth Engine JavaScript API. It offers an easy way to type, debug, run, and manage code. Also to visualize obtained results for code execution.
+
+The Code Editor has the following elements
+
 
 a) Editor de código JavaScript
 b) Mapa para visualizar los datos geoespaciales
@@ -39,6 +46,9 @@ f) Consola de salida
 g) Administrador de tareas (Tasks)
 
 
+.. image:: static/codeeditor.png
+  :width: 400
+  :alt: Code editor
 
 
 **Editor de código JavaScript**: En esta ventana es donde podréis crear vuestros *scripts*. Justo sobre el editor de código, hay disponibles los botones para ejecutar (Run), guardar (Save) y reiniciar (Reset) los *scripts*, así como generar un enlace de acceso a ellos (link).
