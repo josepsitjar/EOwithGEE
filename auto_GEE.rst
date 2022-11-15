@@ -1,8 +1,8 @@
 ****************************************************************************
-Actividad de autoaprendizaje. Introducción a Google Earth Engine
+Earth Observation with Google Earth Engine
 ****************************************************************************
 
-1.1. Introducción
+1.1. Introduction
 =================
 
 Google Earth Engine (GEE) es una plataforma desarrollada por Google, orientada al análisis científico y a la visualización de datos geoespaciales.
