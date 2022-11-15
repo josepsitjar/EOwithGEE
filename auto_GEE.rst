@@ -81,21 +81,24 @@ Now we are going to search a Landsat 8 image from Catalonia acquired on 2015-08-
 	Map.addLayer(image);
 
 
-1.4. Aplicar una combinación RGB sobre una escena
+
+
+1.4. RGB band combination over a scene
 ==================================================
 
-Realizamos una combinación RGB con las bandas de la imagen.
+Create an RGB band combination using image bands:
+
 
 .. code-block:: JavaScript
 
-	// Instanciamos la imagen con el constructor:
+	// Image constructor instance:
 	var image = ee.Image('LANDSAT/LC08/C01/T1_TOA/LC08_198031_20150803');
 
-	// Definimos los parámetros de una combinación RGB.
-	// El valor max se refiere al valor máximo de reflectividad
+	// RGB combination parameters
+	// Max value is the maximum reflectivity value
 	var visParams = {bands: ['B4', 'B3', 'B2'], max: 0.3};
 
-	// Mostramos la imagen en el mapa:
+	// Show the image over the map:
 	Map.addLayer(image, visParams, 'true-color composite')
 
 
