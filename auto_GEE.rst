@@ -314,32 +314,6 @@ Use this code to create a mosaic over la Garrotxa:
 
 
 
-In order to also visualize the LST dataset over the map, add this lines of code:
-
-.. code-block:: JavaScript
-
-  var landSurfaceTemperatureVis = {
-  min: 13000.0,
-  max: 16500.0,
-  palette: [
-    '040274', '040281', '0502a3', '0502b8', '0502ce', '0502e6',
-    '0602ff', '235cb1', '307ef3', '269db1', '30c8e2', '32d3ef',
-    '3be285', '3ff38f', '86e26f', '3ae237', 'b5e22e', 'd6e21f',
-    'fff705', 'ffd611', 'ffb613', 'ff8b13', 'ff6e08', 'ff500d',
-    'ff0000', 'de0101', 'c21301', 'a71001', '911003'
-  ],
-  };
-
-  // Take the median value.
-  var median = modLSTday.median();
-
-  // Clip to the output image to the la Garrotxa boundaries.
-  var clipped = median.clipToCollection(spainBorder);
-
-  Map.addLayer(
-    clipped, landSurfaceTemperatureVis,
-    'Land Surface Temperature');
-
 1.10 Vegetation indices
 ==========================
 
@@ -483,6 +457,34 @@ For that purpose, we are going to use the Modis LST layer.
 
 .. note::
   Use this MODIS collection to search for recently dates: ``var modis = ee.ImageCollection('MODIS/061/MOD11A1');``
+
+
+In order to also visualize the LST dataset over the map, add this lines of code:
+
+.. code-block:: JavaScript
+
+  var landSurfaceTemperatureVis = {
+    min: 13000.0,
+    max: 16500.0,
+    palette: [
+      '040274', '040281', '0502a3', '0502b8', '0502ce', '0502e6',
+      '0602ff', '235cb1', '307ef3', '269db1', '30c8e2', '32d3ef',
+      '3be285', '3ff38f', '86e26f', '3ae237', 'b5e22e', 'd6e21f',
+      'fff705', 'ffd611', 'ffb613', 'ff8b13', 'ff6e08', 'ff500d',
+      'ff0000', 'de0101', 'c21301', 'a71001', '911003'
+    ],
+  };
+
+  // Take the median value.
+  var median = modLSTday.median();
+
+  // Clip to the output image to the la Garrotxa boundaries.
+  var clipped = median.clipToCollection(spainBorder);
+
+  Map.addLayer(
+    clipped, landSurfaceTemperatureVis,
+    'Land Surface Temperature');
+
 
 1.13 Configure a graph to compare Configurar el gráfico para visualizar la comparativa de LST entre diferentes años
 =======================================================================================
