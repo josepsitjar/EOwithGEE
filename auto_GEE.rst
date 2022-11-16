@@ -226,7 +226,7 @@ The administrative datasets can be used to create a composition over Spain and F
   var collection = ee.ImageCollection('LANDSAT/LC08/C01/T1_TOA')
       .filterDate('2021-7-01', '2021-12-31');
 
-  // Reduce the collection by taking the median.
+  // Take the median value.
   var median = collection.median();
 
   // Load a table of state boundaries and filter.
@@ -257,7 +257,7 @@ Create a new Cloud Project, indicating a name for it.
 
 
 .. image:: static/create_project.png
-  :width: 800
+  :width: 400
   :alt: Create a project
 
 
@@ -267,7 +267,7 @@ Finally, click **UPLOAD**.
 After a few minutes, the new file will appear associated to your project. You can check the uploading progress through the *task* tab.
 
 .. image:: static/upload_shapefile.png
-  :width: 800
+  :width: 400
   :alt: Upload a shapefile
 
 Click over the file on the assets tab, and then click **IMPORT**. A new variable will appear to your script editor. You can change the variable name to *comarques.
@@ -301,7 +301,7 @@ Use this code to create a mosaic over la Garrotxa:
   var collection = ee.ImageCollection('LANDSAT/LC08/C01/T1_TOA')
       .filterDate('2021-7-01', '2021-12-31');
 
-  // Reduce the collection by taking the median.
+  // Take the median value.
   var median = collection.median();
 
   // Clip to the output image to the la Garrotxa boundaries.
@@ -312,10 +312,10 @@ Use this code to create a mosaic over la Garrotxa:
   Map.addLayer(clipped, visParams, 'clipped composite');
 
 
-1.9 Vegetation indices
+1.10 Vegetation indices
 ==========================
 
-Work again over a scene, and calculate the vegetation index NDVI:
+Working again over a scene, we are going to calculate the vegetation index **NDVI**:
 
 
 .. code-block:: JavaScript
@@ -354,20 +354,21 @@ It's also possible to use a GEE predefined function to calculate the NDVI:
 	Map.addLayer(ndvi, {min: 0, max: 1, palette: palette}, 'NDVI');
 
 
-1.8 Sacar el máximo potencial de trabajar con un catálogo de datos en la nube
-==============================================================================
+1.11 Get the most out of working with a cloud data catalog
+============================================================
 
-Todo lo que hemos visto hasta ahora, lo podemos hacer de forma mas o menos fácil en un entoro SIG local. Pero el hecho de trabajar con una nuve de datos como las que ofrece GEE, es poder, por ejemplo, evaluar la evolución del NDVI, en un punto concreto, durante un período relativamente largo.
+All this exercices could be done in a local environment using a GIS. But the advantage of working with a cloud dataset as GEE is to perform analysis such as the evolution of NDVI at specific location and for **long time series** of data.
+Carry out this process in a local environment implies search, download and store multiple scene. But using GEE we just have to worry about the javascript instructions.
 
-Debemos tener digitalizado un punto en GEE, i ejecutamos este script (en este caso, nos valemos de una función predefinida en GEE para el cálculo del NDVI)
+Digitize a marker using the GEE interactive map, and run this script (in that case, we use the NDVI predefined function).
 
 
 .. code-block:: JavaScript
 
-	// Importamos la colección LANDSAT 8 i filtramos para el año 2016
+	// Import LANDSAT 8 collection and apply a datarange filter.
 	var l8 = ee.ImageCollection('LANDSAT/LC08/C01/T1_TOA').filterDate('2016-01-01', '2016-12-31');
 
-	// Aplicamos una función sobre la colección, para calcular la banda NDVI
+	// Apply a function over the collection, to generate a NDVI layer
 	var withNDVI = l8.map(function(image) {
 	var ndvi = image.normalizedDifference(['B5', 'B4']).rename('NDVI');
 
@@ -375,7 +376,7 @@ Debemos tener digitalizado un punto en GEE, i ejecutamos este script (en este ca
 
 	});
 
-	// Creamos el gráfico
+	// Create a graphic
 	var chart = ui.Chart.image.series({
 	imageCollection: withNDVI.select('NDVI'),
 	region: point,
@@ -383,7 +384,7 @@ Debemos tener digitalizado un punto en GEE, i ejecutamos este script (en este ca
 	scale: 30
 	}).setOptions({title: 'NDVI over time'});
 
-	// Mostramos el grafico en la consola
+	// Print the graph at console 
 	print(chart);
 
 
