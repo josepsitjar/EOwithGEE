@@ -180,8 +180,7 @@ Other administrative borders are available here: https://developers.google.com/e
 
 
 
-
-1.6 Load an image collection
+1.7 Load an image collection
 =============================
 
 It's possible to create a mosaic loading images from a collection, and covering all the map surface:
@@ -197,8 +196,10 @@ It's possible to create a mosaic loading images from a collection, and covering 
 
 
 This mosaic has a problem. You can visualize scenes with clouds, as by default, the most recent pixel from the image stack is used.
-But hopefully we can modify this behaviour. Just indicate GEE to take the pixel mean value of the image stack (not the most recent).
-Podemos modificar este comportamiento por defecto, indicando a GEE que tome el valor medio de todo el stack de píxeles de las imagenes de la colección (no el mas reciente). Se eliminarán nubes (valor mas alto de píxel) y sombras (valor mas bajo).Simplemente, añadiendo a la variable landsat2016 el filtro .median(): var landsat2016 = l8.filterDate('2016-01-01', '2016-12-31').median();
+But hopefully we can modify this behaviour. Just indicate GEE to take into account the pixel mean value of the image stack (not the most recent).
+
+This eliminates clouds (the highest pixel value) and shadows (the lowest value). Just adding the filter ``.median()`` to 'landsat2016' variable: `` var landsat2016 = l8.filterDate('2016-01-01', '2016-12-31').median();``
+
 
 This is the script:
 
@@ -212,7 +213,7 @@ This is the script:
 
 
 
-1.6 Clip an image collection using administrative units
+1.8 Clip an image collection using administrative units
 =========================================================
 
 The administrative datasets can be used to create a composition over Spain and France. For example:
@@ -243,18 +244,86 @@ The administrative datasets can be used to create a composition over Spain and F
 
 
 
+1.9 Using your own cartography (shapefile)
+=========================================
 
-1.7 Índices de vegetación
-==========================
+It's also possible to upload your own tables and datasets to GEE.
+We are going to upload a shapefile from ICGC with administrative limits (Comarques).
 
-Volvemos a trabajar sobre una escena, y calculamos un índice, en este caso el índice de vegetación NDVI.
+The shapefile must include three files: shp, shx and dbf, and must be projected to WGS84.
+
+Then go to **Assets** tab and create a new project (**ADD A PROJECT**).
+Create a new Cloud Project, indicating a name for it.
+
+
+.. image:: static/create_project.png
+  :width: 800
+  :alt: Create a project
+
+
+Click at **New > Shape files**. Drag & drop de shapefile files, select the project and indicate a name for the new asset.
+Finally, click **UPLOAD**.
+
+After a few minutes, the new file will appear associated to your project. You can check the uploading progress through the *task* tab.
+
+.. image:: static/upload_shapefile.png
+  :width: 800
+  :alt: Upload a shapefile
+
+Click over the file on the assets tab, and then click **IMPORT**. A new variable will appear to your script editor. You can change the variable name to *comarques.
+
+.. note::
+  To run the following code, don't forget to import the layer as indicated.
 
 .. code-block:: JavaScript
 
-	// Instanciamos la imagen con el constructor:
+  var styleParams = {
+    fillColor: 'b5ffb4',
+    color: '00909F',
+    width: 1.0,
+  };
+
+
+  var garrotxa =  comarques.filter(ee.Filter.eq('NOMCOMAR', 'Garrotxa'))
+
+  var dataset = garrotxa.style(styleParams);
+
+  Map.addLayer(dataset, {}, 'First Level Administrative Units');
+
+
+Use this code to create a mosaic over la Garrotxa:
+
+.. code-block:: JavaScript
+
+  var garrotxa =  comarques.filter(ee.Filter.eq('NOMCOMAR', 'Garrotxa'))
+
+  // Load Landsat 7 raw imagery and filter it to a certain dates.
+  var collection = ee.ImageCollection('LANDSAT/LC08/C01/T1_TOA')
+      .filterDate('2021-7-01', '2021-12-31');
+
+  // Reduce the collection by taking the median.
+  var median = collection.median();
+
+  // Clip to the output image to the la Garrotxa boundaries.
+  var clipped = median.clipToCollection(garrotxa);
+
+  // Display the result.
+  var visParams = {bands: ['B4', 'B3', 'B2'], max: 0.3};
+  Map.addLayer(clipped, visParams, 'clipped composite');
+
+
+1.9 Vegetation indices
+==========================
+
+Work again over a scene, and calculate the vegetation index NDVI:
+
+
+.. code-block:: JavaScript
+
+	// Instance an image with the constructor:
 	var image = ee.Image('LANDSAT/LC08/C01/T1_TOA/LC08_198031_20150803');
 
-	// Calculamos el valor de NDVI.
+	// Calculate the NDVI value.
 	var nir = image.select('B5');
 	var red = image.select('B4');
 	var ndvi = nir.subtract(red).divide(nir.add(red)).rename('NDVI');
@@ -265,23 +334,23 @@ Volvemos a trabajar sobre una escena, y calculamos un índice, en este caso el �
 	Map.addLayer(ndvi, ndviParams, 'NDVI image');
 
 
-También se puede usar una función predefinida de GEE para el cálculo del NDVI:
+It's also possible to use a GEE predefined function to calculate the NDVI:
 
 .. code-block:: JavaScript
 
 	var image = ee.Image('LANDSAT/LC08/C01/T1_TOA/LC08_198031_20150803');
 
-	// Utilizamos la función nomralizedDifference(A,B) para el cálculo del NDVI
+  // Use the `` nomralizedDifference(A,B)`` function to calculate NDVI
 	var ndvi = image.normalizedDifference(['B5', 'B4']);
 
-  // Creamos la paleta de color
+  // Create the color palette
 	var palette = ['FFFFFF', 'CE7E45', 'DF923D', 'F1B555', 'FCD163', '99B718',
 
                '74A901', '66A000', '529400', '3E8601', '207401', '056201',
 
                '004C00', '023B01', '012E01', '011D01', '011301'];
 
-	// Añadimos la capa al mapa
+	// Add layer to map
 	Map.addLayer(ndvi, {min: 0, max: 1, palette: palette}, 'NDVI');
 
 
