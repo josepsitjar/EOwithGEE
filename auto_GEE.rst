@@ -67,7 +67,7 @@ g) Tasks tab
 1.3. Search for a scene
 ========================
 
-Knowing the identifier, we can look for a specific scene.
+Knowing the identifier, we can look for a specific scene (using an Earth Engine asset ID).
 
 Now we are going to search a Landsat 8 image from Catalonia acquired on 2015-08-03.
 
@@ -102,40 +102,90 @@ Create an RGB band combination using image bands:
 	Map.addLayer(image, visParams, 'true-color composite')
 
 
-1.5 Búsqueda de una imagen si no conocemos su referencia concreta
+
+.. note::
+   Apply different false color band combinations
+
+
+1.5 Search an image without knowing it's specific reference
 ==================================================================
 
-En caso de no conocer la referencia concreta a una imagen, podemos hacer una búsqueda a partir de una colección y seleccionar aquella que coincida con una ubicación.
-En primer lugar, tenemos que utilizar las herramientas de edición de GEE para digitalizar un punto y cambiarle el nombre (ej. point).
+What happens if we don't know the GEE object image id?
+We can perform a search based on a collection and select the ones that match a specific location.
 
-A continuación:
+It's necessary to use the GEE digitizing tool to create a point. Then we can change it's default name (Ex. point).
+
 
 
 .. code-block:: JavaScript
 
-	// Instanciamos la colección de Landsat 8
+	// Instance the Landsat 8 collection
 	var l8 = ee.ImageCollection('LANDSAT/LC08/C01/T1_TOA');
 
-	// Aplicamos un filtro, relativo a la ubicación del punto
+	// Apply a filter, based on point location
 	var spatialFiltered = l8.filterBounds(point);
 
-	// Aplicamos un filtro, relativo a un rango de fechas
+	// Apply a filter, according to data range
 	var temporalFiltered = spatialFiltered.filterDate('2021-12-01', '2021-12-31');
 
-	// Ordenamos las escenas en función de la cobertura de nubes
+	// Order scenes based on cloud coverage
 	var sorted = temporalFiltered.sort('CLOUD_COVER');
 
-	// Seleccionamos la primera escena
+	// Select the first scene
 	var scene = sorted.first();
 
-	// Añadimos la escena en el mapa
+	// Add the scene to map
 	Map.addLayer(scene, {}, 'default RGB');
 
 
-1.6 Cargamos toda una colección de imágenes
-===========================================
+.. note::
+  Use this page to search over all available datasets: https://developers.google.com/earth-engine/datasets
 
-Podemos aprovechar para cargar todas las imagenes de la colección para crear un mosaico que cubra toda la superfície del mapa:
+
+
+
+1.6 Load administrative units
+=================================
+
+Not only satellite images datasets are availabe at GEE. Other data, as Global Administrative Units, are also at your disposal.
+
+This is just an example on how to load a Global Administrative Unit Layer:
+
+.. code-block:: JavaScript
+
+  var dataset = ee.FeatureCollection("FAO/GAUL/2015/level1");
+
+  Map.setCenter(7.82, 49.1, 4);
+
+  var styleParams = {
+  fillColor: 'b5ffb4',
+  color: '00909F',
+  width: 1.0,
+  };
+
+  dataset = dataset.style(styleParams);
+
+  Map.addLayer(dataset, {}, 'First Level Administrative Units');
+
+
+And we can apply a filter to show just one country:
+
+.. code-block:: JavaScript
+
+  var dataset =  ee.FeatureCollection('FAO/GAUL_SIMPLIFIED_500m/2015/level1')
+                  .filter(ee.Filter.eq('ADM0_NAME', 'Spain'))
+
+Other administrative borders are available here: https://developers.google.com/earth-engine/datasets/tags/borders
+
+
+
+
+
+1.6 Load an image collection
+=============================
+
+It's possible to create a mosaic loading images from a collection, and covering all the map surface:
+
 
 .. code-block:: JavaScript
 
@@ -146,11 +196,11 @@ Podemos aprovechar para cargar todas las imagenes de la colección para crear un
 	Map.addLayer(landsat2016, visParams, 'l8 collection');
 
 
-Este mosaico presenta un problema, y es que se visualizan escenas con muchas nubes, dado que por defecto se muestra el píxel mas reciente de todo el stack de imagenes.
-
+This mosaic has a problem. You can visualize scenes with clouds, as by default, the most recent pixel from the image stack is used.
+But hopefully we can modify this behaviour. Just indicate GEE to take the pixel mean value of the image stack (not the most recent).
 Podemos modificar este comportamiento por defecto, indicando a GEE que tome el valor medio de todo el stack de píxeles de las imagenes de la colección (no el mas reciente). Se eliminarán nubes (valor mas alto de píxel) y sombras (valor mas bajo).Simplemente, añadiendo a la variable landsat2016 el filtro .median(): var landsat2016 = l8.filterDate('2016-01-01', '2016-12-31').median();
 
-El *script* quedaría del siguiente modo:
+This is the script:
 
 .. code-block:: JavaScript
 
@@ -159,6 +209,39 @@ El *script* quedaría del siguiente modo:
 	var visParams = {bands: ['B4', 'B3', 'B2'], max: 0.3};
 
 	Map.addLayer(landsat2016, visParams, 'l8 collection');
+
+
+
+1.6 Clip an image collection using administrative units
+=========================================================
+
+The administrative datasets can be used to create a composition over Spain and France. For example:
+
+.. code-block:: JavaScript
+
+  // Composite an image collection and clip it to a boundary.
+
+  // Load Landsat 7 raw imagery and filter it to a certain dates.
+  var collection = ee.ImageCollection('LANDSAT/LC08/C01/T1_TOA')
+      .filterDate('2021-7-01', '2021-12-31');
+
+  // Reduce the collection by taking the median.
+  var median = collection.median();
+
+  // Load a table of state boundaries and filter.
+  var fc = ee.FeatureCollection('FAO/GAUL_SIMPLIFIED_500m/2015/level1')
+      .filter(ee.Filter.or(
+          ee.Filter.eq('ADM0_NAME', 'Spain'),
+          ee.Filter.eq('ADM0_NAME', 'France')));
+
+  // Clip to the output image to the Sapain and France state boundaries.
+  var clipped = median.clipToCollection(fc);
+
+  // Display the result.
+  var visParams = {bands: ['B4', 'B3', 'B2'], max: 0.3};
+  Map.addLayer(clipped, visParams, 'clipped composite');
+
+
 
 
 1.7 Índices de vegetación
