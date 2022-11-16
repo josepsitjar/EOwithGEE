@@ -486,40 +486,40 @@ In order to also visualize the LST dataset over the map, add this lines of code:
     'Land Surface Temperature');
 
 
-1.13 Configure a graph to compare Configurar el gráfico para visualizar la comparativa de LST entre diferentes años
+1.13 Configure the graph to visualize the comparison of LST between different years
 =======================================================================================
 
 .. code-block:: JavaScript
 
-	// En primer lugar, aplicamos una máscara sobre la zona de España
-	// Creamos una máscara
-	// Importamos una colección de datos con los límites de cada país
+	// Apply a mask over Spain
+	// Create a mask
+	// Import a dataset collection with country borders
 	var dataset = ee.FeatureCollection('USDOS/LSIB_SIMPLE/2017');
 
-	// Aplicamos un filtro para seleccionar Spain
+	// Apply a filter to select Spain
 	var spainBorder = dataset.filter(ee.Filter.eq('country_na', 'Spain'));
 
-	// Añadimos Spain al mapa
+	// Add Spain to map
 	Map.centerObject(spainBorder, 6);
 	Map.addLayer(spainBorder);
 
-	// A continuación, importamos los datos de temperatura (LST) del sensor MODIS
-	// Importamos la colección LST de MODIS
+  // Import temperature (LST) data from MODIS sensor
+  // Import LST MODIS collection
 	var modis = ee.ImageCollection('MODIS/MOD11A2');
 
-	// Definimos el rango de datos. Fecha de inicio y final
-	// Desede la fecha de inicio + un año
+  // Define a date range. Initial and final dates.
+  // From initial date + one year
 	var start = ee.Date('2014-01-01');
 	var dateRange = ee.DateRange(start, start.advance(2, 'year'));
 
-	// Aplicamos el filtro a la colección de datos MODIS para incorporar únicamente los datos de la fecha seleccionada
+	// Apply a filter to MODIS data collection to just import data related to selected daterange.
 	var mod11a2 = modis.filterDate(dateRange);
 
-	// Seleccionamos la banda LST a 1km
+	// Select 1km LST band
 	var modLSTday = mod11a2.select('LST_Day_1km');
 
-	// Convertir de grados Kelvin a Celsius
-	// Aplicamos una función para convertir los datos de Kelvin a Celsius
+  // Convert Kelvin to Celsius
+  // Apply a function to convert data from Kelvin to Celsius
 	var modLSTc = modLSTday.map(function(img) {
 	return img
 		.multiply(0.02)
@@ -528,7 +528,7 @@ In order to also visualize the LST dataset over the map, add this lines of code:
 	});
 
 
-	// Creamos un gráfico con la evolución de la temperatura
+	// Create a graph comparing temperature evolution
 	var chart = ui.Chart.image.doySeriesByYear({
 									imageCollection: modLSTc,
 									bandName: 'LST_Day_1km',
