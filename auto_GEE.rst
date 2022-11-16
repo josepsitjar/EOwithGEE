@@ -304,13 +304,41 @@ Use this code to create a mosaic over la Garrotxa:
   // Take the median value.
   var median = collection.median();
 
-  // Clip to the output image to the la Garrotxa boundaries.
+  // Clip to the output image to 'la Garrotxa' boundaries.
   var clipped = median.clipToCollection(garrotxa);
 
   // Display the result.
   var visParams = {bands: ['B4', 'B3', 'B2'], max: 0.3};
   Map.addLayer(clipped, visParams, 'clipped composite');
 
+
+
+
+In order to also visualize the LST dataset over the map, add this lines of code:
+
+.. code-block:: JavaScript
+
+  var landSurfaceTemperatureVis = {
+  min: 13000.0,
+  max: 16500.0,
+  palette: [
+    '040274', '040281', '0502a3', '0502b8', '0502ce', '0502e6',
+    '0602ff', '235cb1', '307ef3', '269db1', '30c8e2', '32d3ef',
+    '3be285', '3ff38f', '86e26f', '3ae237', 'b5e22e', 'd6e21f',
+    'fff705', 'ffd611', 'ffb613', 'ff8b13', 'ff6e08', 'ff500d',
+    'ff0000', 'de0101', 'c21301', 'a71001', '911003'
+  ],
+  };
+
+  // Take the median value.
+  var median = modLSTday.median();
+
+  // Clip to the output image to the la Garrotxa boundaries.
+  var clipped = median.clipToCollection(spainBorder);
+
+  Map.addLayer(
+    clipped, landSurfaceTemperatureVis,
+    'Land Surface Temperature');
 
 1.10 Vegetation indices
 ==========================
@@ -384,49 +412,50 @@ Digitize a marker using the GEE interactive map, and run this script (in that ca
 	scale: 30
 	}).setOptions({title: 'NDVI over time'});
 
-	// Print the graph at console 
+	// Print the graph at console
 	print(chart);
 
 
-1.9 Analizar la evolución de la LST (Land Surface Temperature)
+1.12 Analysing the LST (Land Surface Temperature) evolution
 ================================================================
 
-Otra ventaja de trabajar con un catálogo tan extenso de imágenes es la de poder analizar, por ejemplo, la evolución de la temperatura en superfície (LST).
+Another significant advantage to work with such an extensive image catalog, is to analyse the land surface temperature evolution.
 
-Utilizaremos, para ello, la capa LST de Modis.
+For that purpose, we are going to use the Modis LST layer.
+
 
 
 .. code-block:: JavaScript
 
-	// En primer lugar, aplicamos una máscara sobre la zona de España
-	// Creamos una máscara
-	// Importamos una colección de datos con los límites de cada país
+	// First, apply a mask over Spain area.
+	// Create a mask
+	// Import a dataset collection with country borders
 	var dataset = ee.FeatureCollection('USDOS/LSIB_SIMPLE/2017');
 
-	// Aplicamos un filtro para seleccionar Spain
+	// Apply a filter to select Spain
 	var spainBorder = dataset.filter(ee.Filter.eq('country_na', 'Spain'));
 
-	// Añadimos Spain al mapa
+	// Add Spain to map
 	Map.centerObject(spainBorder, 6);
 	Map.addLayer(spainBorder);
 
-	// A continuación, importamos los datos de temperatura (LST) del sensor MODIS
-	// Importamos la colección LST de MODIS
+	// Import temperature (LST) data from MODIS sensor
+	// Import LST MODIS collection
 	var modis = ee.ImageCollection('MODIS/MOD11A2');
 
-	// Definimos el rango de datos. Fecha de inicio y final
-	// Desede la fecha de inicio + un año
+	// Define a date range. Initial and final dates.
+	// From initial date + one year
 	var start = ee.Date('2017-01-01');
 	var dateRange = ee.DateRange(start, start.advance(1, 'year'));
 
-	// Aplicamos el filtro a la colección de datos MODIS para incorporar únicamente los datos de la fecha seleccionada
+	// Apply a filter to MODIS data collection to just import data related to selected daterange.
 	var mod11a2 = modis.filterDate(dateRange);
 
-	// Seleccionamos la banda LST a 1km
+	// Select 1km LST band
 	var modLSTday = mod11a2.select('LST_Day_1km');
 
-	// Convertir de grados Kelvin a Celsius
-	// Aplicamos una función para convertir los datos de Kelvin a Celsius
+	// Convert Kelvin to Celsius
+	// Apply a function to convert data from Kelvin to Celsius
 	var modLSTc = modLSTday.map(function(img) {
 
 	  return img
@@ -439,7 +468,7 @@ Utilizaremos, para ello, la capa LST de Modis.
 
 	});
 
-	// Creamos un gráfico con la evolución de la temperatura
+	// Create a graph with the temperature evolution
 	var ts1 = ui.Chart.image.series({
 	  imageCollection: modLSTc,
 	  region: spainBorder,
@@ -452,7 +481,10 @@ Utilizaremos, para ello, la capa LST de Modis.
 	print(ts1);
 
 
-1.10 Configurar el gráfico para visualizar la comparativa de LST entre diferentes años
+.. note::
+  Use this MODIS collection to search for recently dates: ``var modis = ee.ImageCollection('MODIS/061/MOD11A1');``
+
+1.13 Configure a graph to compare Configurar el gráfico para visualizar la comparativa de LST entre diferentes años
 =======================================================================================
 
 .. code-block:: JavaScript
